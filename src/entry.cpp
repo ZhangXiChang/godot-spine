@@ -2,9 +2,21 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-#include "register_types.h"
-
 using namespace godot;
+
+#include "godot-spine/Spine.h"
+
+void register_initializer(ModuleInitializationLevel p_level)
+{
+    if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
+        return;
+    GDREGISTER_CLASS(Spine);
+}
+void register_terminator(ModuleInitializationLevel p_level)
+{
+    if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
+        return;
+}
 
 extern "C"
 {
