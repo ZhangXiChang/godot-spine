@@ -4,17 +4,14 @@
 
 using namespace godot;
 
-#include "godot-spine/spine-editor-plugin.h"
+#include "godot-spine/spine-importer.h"
 
 void register_initializer(ModuleInitializationLevel p_level)
 {
     switch (p_level)
     {
     case MODULE_INITIALIZATION_LEVEL_SCENE:
-        break;
-    case MODULE_INITIALIZATION_LEVEL_EDITOR:
-        ClassDB::register_internal_class<SpineEditorPlugin>();
-        EditorPlugins::add_by_type<SpineEditorPlugin>();
+        ClassDB::register_class<SpineImporter>();
         break;
     }
 }

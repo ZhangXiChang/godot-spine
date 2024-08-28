@@ -1,5 +1,3 @@
-add_repositories("xmake-repo-dev https://github.com/xmake-io/xmake-repo.git")
-
 add_rules("mode.debug", "mode.release")
 
 add_requires("godotcpp4","spine-runtimes")
