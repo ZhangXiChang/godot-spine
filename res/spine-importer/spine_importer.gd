@@ -12,9 +12,6 @@ func _enter_tree() -> void:
 	editor_file_dialog.dir_selected.connect(dir_selected)
 	get_tree().root.add_child(editor_file_dialog)
 
-func _exit_tree() -> void:
-	editor_file_dialog.queue_free()
-
 func _on_browse_atlas_file_pressed() -> void:
 	editor_file_dialog.file_mode=EditorFileDialog.FILE_MODE_OPEN_FILE
 	editor_file_dialog.filters=["*.atlas;图集"]
