@@ -61,23 +61,23 @@ public:
         spine_node->set_name(node_name);
 
         auto skeleton = memnew(Skeleton2D);
-        skeleton->set_name("Skeleton");
         spine_node->add_child(skeleton);
         skeleton->set_owner(spine_node);
+        skeleton->set_name("Skeleton");
         auto root_bone = memnew(Bone2D);
-        auto spine_root_bone = spine_skeleton.getRootBone();
-        root_bone->set_name(spine_root_bone->getData().getName().buffer());
         skeleton->add_child(root_bone);
         root_bone->set_owner(spine_node);
+        auto spine_root_bone = spine_skeleton.getRootBone();
+        root_bone->set_name(spine_root_bone->getData().getName().buffer());
         root_bone->set_position(Vector2(spine_root_bone->getX(), spine_root_bone->getY()));
         root_bone->set_rotation(Math::deg_to_rad(spine_root_bone->getRotation()));
         root_bone->set_scale(Vector2(spine_root_bone->getScaleX(), spine_root_bone->getScaleY()));
         parse_spine_bone(spine_node, root_bone, spine_root_bone->getChildren());
 
         auto skin = memnew(Node2D);
-        skin->set_name("Skin");
         spine_node->add_child(skin);
         skin->set_owner(spine_node);
+        skin->set_name("Skin");
         for (size_t i = 0; i < spine_skeleton.getDrawOrder().size(); i++)
         {
             auto slot = spine_skeleton.getDrawOrder()[i];
@@ -85,11 +85,12 @@ public:
             if (attachment && attachment->getRTTI().isExactly(MeshAttachment::rtti))
             {
                 auto mesh = (MeshAttachment *)attachment;
+
                 auto polygon = memnew(Polygon2D);
-                polygon->set_texture(this->texture);
-                polygon->set_name(slot->getData().getName().buffer());
                 skin->add_child(polygon);
                 polygon->set_owner(spine_node);
+                polygon->set_texture(this->texture);
+                polygon->set_name(slot->getData().getName().buffer());
                 auto uv = PackedVector2Array();
                 for (size_t i = 0; i < mesh->getUVs().size(); i += 2)
                 {
@@ -109,12 +110,12 @@ public:
         {
             auto spine_bone = spine_child_bones[i];
             auto bone = memnew(Bone2D);
+            base_bone->add_child(bone);
+            bone->set_owner(owner);
             bone->set_name(spine_bone->getData().getName().buffer());
             bone->set_position(Vector2(spine_bone->getX(), spine_bone->getY()));
             bone->set_rotation(Math::deg_to_rad(spine_bone->getRotation()));
             bone->set_scale(Vector2(spine_bone->getScaleX(), spine_bone->getScaleY()));
-            base_bone->add_child(bone);
-            bone->set_owner(owner);
             parse_spine_bone(owner, bone, spine_bone->getChildren());
             if (bone->get_child_count() == 0)
             {
