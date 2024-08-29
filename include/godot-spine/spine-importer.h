@@ -20,13 +20,11 @@ public:
     {
         delete this->atlas;
         delete this->skeleton_data;
-        delete this->animation_state_data;
     }
 
 private:
     Atlas *atlas = nullptr;
     SkeletonData *skeleton_data = nullptr;
-    AnimationStateData *animation_state_data = nullptr;
 
 public:
     static void _bind_methods()
@@ -48,19 +46,12 @@ public:
         {
             return FAILED;
         }
-        this->animation_state_data = new AnimationStateData(this->skeleton_data);
         return OK;
     }
     Node2D *to_node2d(godot::String node_name)
     {
         auto skeleton = Skeleton(this->skeleton_data);
-        skeleton.setScaleY(-1.);
-        auto animation_state = AnimationState(this->animation_state_data);
-        animation_state.setEmptyAnimations(0);
-        animation_state.update(0);
-        animation_state.apply(skeleton);
-        skeleton.setToSetupPose();
-        skeleton.updateWorldTransform();
+        skeleton.setScaleY(-1);
 
         auto spine_node = memnew(Node2D);
         spine_node->set_name(node_name);
@@ -73,8 +64,9 @@ public:
         root_bone->set_name(skeleton.getRootBone()->getData().getName().buffer());
         skeleton2d->add_child(root_bone);
         root_bone->set_owner(spine_node);
-        root_bone->set_position({skeleton.getRootBone()->getX(), skeleton.getRootBone()->getY()});
-        root_bone->set_rotation(skeleton.getRootBone()->getRotation());
+        root_bone->set_position(Vector2(skeleton.getRootBone()->getX(), skeleton.getRootBone()->getY()));
+        root_bone->set_rotation(Math::deg_to_rad(skeleton.getRootBone()->getRotation()));
+        root_bone->set_scale(Vector2(skeleton.getRootBone()->getScaleX(), -skeleton.getRootBone()->getScaleY()) * 4.);
         parse_spine_bone(spine_node, root_bone, skeleton.getRootBone()->getChildren());
 
         auto skin = memnew(Node2D);
@@ -88,14 +80,11 @@ public:
     {
         for (size_t i = 0; i < spine_child_bones.size(); i++)
         {
-            if (spine_child_bones[i]->getData().getName() == "F_Hip")
-            {
-                UtilityFunctions::print(Vector2({spine_child_bones[i]->getX(), spine_child_bones[i]->getY()}));
-            }
             auto bone = memnew(Bone2D);
             bone->set_name(spine_child_bones[i]->getData().getName().buffer());
-            bone->set_position({spine_child_bones[i]->getX(), spine_child_bones[i]->getY()});
-            bone->set_rotation(spine_child_bones[i]->getRotation());
+            bone->set_position(Vector2(spine_child_bones[i]->getX(), spine_child_bones[i]->getY()));
+            bone->set_rotation(Math::deg_to_rad(spine_child_bones[i]->getRotation()));
+            bone->set_scale(Vector2(spine_child_bones[i]->getScaleX(), spine_child_bones[i]->getScaleY()));
             base_bone->add_child(bone);
             bone->set_owner(owner);
             parse_spine_bone(owner, bone, spine_child_bones[i]->getChildren());
