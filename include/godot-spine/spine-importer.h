@@ -82,29 +82,23 @@ public:
         {
             auto slot = spine_skeleton.getDrawOrder()[i];
             auto attachment = slot->getAttachment();
-            if (attachment)
+            if (attachment && attachment->getRTTI().isExactly(MeshAttachment::rtti))
             {
-                if (attachment->getRTTI().isExactly(MeshAttachment::rtti))
+                auto mesh = (MeshAttachment *)attachment;
+                auto polygon = memnew(Polygon2D);
+                polygon->set_texture(this->texture);
+                polygon->set_name(slot->getData().getName().buffer());
+                skin->add_child(polygon);
+                polygon->set_owner(spine_node);
+                auto uv = PackedVector2Array();
+                for (size_t i = 0; i < mesh->getUVs().size(); i += 2)
                 {
-                    auto mesh = (MeshAttachment *)attachment;
-                    auto polygon = memnew(Polygon2D);
-                    polygon->set_texture(this->texture);
-                    polygon->set_name(slot->getData().getName().buffer());
-                    polygon->set_position(Vector2(slot->getBone().getX(), slot->getBone().getY()));
-                    polygon->set_rotation(Math::deg_to_rad(slot->getBone().getRotation()));
-                    polygon->set_scale(Vector2(slot->getBone().getScaleX(), slot->getBone().getScaleY()));
-                    skin->add_child(polygon);
-                    polygon->set_owner(spine_node);
-                    auto uv = PackedVector2Array();
-                    for (size_t i = 0; i < mesh->getUVs().size(); i += 2)
-                    {
-                        auto u = mesh->getUVs()[i] * this->texture->get_width();
-                        auto v = mesh->getUVs()[i + 1] * this->texture->get_height();
-                        uv.push_back(Vector2(u, v));
-                    }
-                    polygon->set_polygon(uv);
-                    polygon->set_internal_vertex_count((mesh->getUVs().size() / 2) - (mesh->getHullLength() / 2));
+                    auto u = mesh->getUVs()[i] * this->texture->get_width();
+                    auto v = mesh->getUVs()[i + 1] * this->texture->get_height();
+                    uv.push_back(Vector2(u, v));
                 }
+                polygon->set_polygon(uv);
+                polygon->set_internal_vertex_count((mesh->getUVs().size() / 2) - (mesh->getHullLength() / 2));
             }
         }
         return spine_node;
