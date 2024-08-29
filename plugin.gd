@@ -24,7 +24,8 @@ func test() -> void:
 	var spine_importer=SpineImporter.new()
 	if spine_importer.load(
 		"C:/Users/yxrbe/Project/Godot/demo/test/char_179_cgbird_sightseer_1.atlas",
-		"C:/Users/yxrbe/Project/Godot/demo/test/char_179_cgbird_sightseer_1.skel"
+		"C:/Users/yxrbe/Project/Godot/demo/test/char_179_cgbird_sightseer_1.skel",
+		"C:/Users/yxrbe/Project/Godot/demo/test/char_179_cgbird_sightseer_1.png"
 	)!=OK:
 		push_error("加载文件失败")
 	else:
