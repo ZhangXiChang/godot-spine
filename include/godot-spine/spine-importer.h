@@ -16,16 +16,9 @@ using namespace spine;
 class SpineImporter : public Object
 {
     GDCLASS(SpineImporter, Object)
-public:
-    ~SpineImporter()
-    {
-        delete this->atlas;
-        delete this->skeleton_data;
-    }
-
 private:
-    Atlas *atlas = nullptr;
-    SkeletonData *skeleton_data = nullptr;
+    std::shared_ptr<Atlas> atlas;
+    std::shared_ptr<SkeletonData> skeleton_data;
     Ref<Texture2D> texture;
 
 public:
@@ -37,12 +30,12 @@ public:
 
     Error load(godot::String atlas_path, godot::String skel_path, godot::String texture_path)
     {
-        this->atlas = new Atlas(atlas_path.utf8().get_data(), nullptr);
+        this->atlas = std::make_shared<Atlas>(atlas_path.utf8().get_data(), nullptr);
         if (!this->atlas)
         {
             return FAILED;
         }
-        this->skeleton_data = SkeletonBinary(this->atlas).readSkeletonDataFile(skel_path.utf8().get_data());
+        this->skeleton_data = std::shared_ptr<SkeletonData>(SkeletonBinary(this->atlas.get()).readSkeletonDataFile(skel_path.utf8().get_data()));
         if (!this->skeleton_data)
         {
             return FAILED;
@@ -55,7 +48,8 @@ public:
     }
     Node2D *to_node2d(godot::String node_name)
     {
-        auto spine_skeleton = Skeleton(this->skeleton_data);
+        auto spine_skeleton = Skeleton(this->skeleton_data.get());
+        spine_skeleton.updateWorldTransform();
 
         auto spine_node = memnew(Node2D);
         spine_node->set_name(node_name);
@@ -69,9 +63,8 @@ public:
         root_bone->set_owner(spine_node);
         auto spine_root_bone = spine_skeleton.getRootBone();
         root_bone->set_name(spine_root_bone->getData().getName().buffer());
-        root_bone->set_position(Vector2(spine_root_bone->getX(), spine_root_bone->getY()));
-        root_bone->set_rotation(Math::deg_to_rad(spine_root_bone->getRotation()));
-        root_bone->set_scale(Vector2(spine_root_bone->getScaleX(), spine_root_bone->getScaleY()));
+        root_bone->set_global_position(Vector2(spine_root_bone->getWorldX(), spine_root_bone->getWorldY()));
+        root_bone->set_global_scale(Vector2(spine_root_bone->getWorldScaleX(), spine_root_bone->getWorldScaleY()));
         parse_spine_bone(spine_node, root_bone, spine_root_bone->getChildren());
 
         auto skin = memnew(Node2D);
@@ -86,11 +79,16 @@ public:
             {
                 auto mesh = (MeshAttachment *)attachment;
 
+                auto polygon_node = memnew(Node2D);
+                skin->add_child(polygon_node);
+                polygon_node->set_owner(spine_node);
+                polygon_node->set_name(slot->getData().getName().buffer());
+
                 auto polygon = memnew(Polygon2D);
-                skin->add_child(polygon);
+                polygon_node->add_child(polygon);
                 polygon->set_owner(spine_node);
                 polygon->set_texture(this->texture);
-                polygon->set_name(slot->getData().getName().buffer());
+                polygon->set_name("Polygon");
                 polygon->set_skeleton(polygon->get_path_to(skeleton));
                 auto uv = PackedVector2Array();
                 for (size_t i = 0; i < mesh->getUVs().size(); i += 2)
@@ -101,6 +99,14 @@ public:
                 }
                 polygon->set_polygon(uv);
                 polygon->set_internal_vertex_count((mesh->getUVs().size() / 2) - (mesh->getHullLength() / 2));
+
+                polygon->set_position((-Vector2({
+                                          mesh->getRegionU() * this->texture->get_width(),
+                                          mesh->getRegionV() * this->texture->get_height(),
+                                      })) -
+                                      (Vector2(mesh->getRegionWidth(), mesh->getRegionHeight()) / 2.f));
+                auto bone = (Bone2D *)skeleton->find_child(slot->getBone().getData().getName().buffer());
+                polygon_node->set_global_position(bone->get_global_position());
             }
         }
         return spine_node;
@@ -114,9 +120,8 @@ public:
             base_bone->add_child(bone);
             bone->set_owner(owner);
             bone->set_name(spine_bone->getData().getName().buffer());
-            bone->set_position(Vector2(spine_bone->getX(), spine_bone->getY()));
-            bone->set_rotation(Math::deg_to_rad(spine_bone->getRotation()));
-            bone->set_scale(Vector2(spine_bone->getScaleX(), spine_bone->getScaleY()));
+            bone->set_global_position(Vector2(spine_bone->getWorldX(), spine_bone->getWorldY()));
+            bone->set_global_scale(Vector2(spine_bone->getWorldScaleX(), spine_bone->getWorldScaleY()));
             parse_spine_bone(owner, bone, spine_bone->getChildren());
             if (bone->get_child_count() == 0)
             {
