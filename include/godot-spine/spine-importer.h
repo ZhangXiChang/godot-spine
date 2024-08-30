@@ -58,14 +58,7 @@ public:
         spine_node->add_child(skeleton);
         skeleton->set_owner(spine_node);
         skeleton->set_name("Skeleton");
-        auto root_bone = memnew(Bone2D);
-        skeleton->add_child(root_bone);
-        root_bone->set_owner(spine_node);
-        auto spine_root_bone = spine_skeleton.getRootBone();
-        root_bone->set_name(spine_root_bone->getData().getName().buffer());
-        root_bone->set_global_position(Vector2(spine_root_bone->getWorldX(), spine_root_bone->getWorldY()));
-        root_bone->set_global_scale(Vector2(spine_root_bone->getWorldScaleX(), spine_root_bone->getWorldScaleY()));
-        parse_spine_bone(spine_node, root_bone, spine_root_bone->getChildren());
+        parse_spine_bone(spine_node, skeleton, spine_skeleton.getRootBone());
 
         auto skin = memnew(Node2D);
         spine_node->add_child(skin);
@@ -107,22 +100,21 @@ public:
         }
         return spine_node;
     }
-    void parse_spine_bone(Node *owner, Bone2D *base_bone, spine::Vector<Bone *> &spine_child_bones)
+    void parse_spine_bone(Node *owner, Node2D *base_node, Bone *spine_bone)
     {
-        for (size_t i = 0; i < spine_child_bones.size(); i++)
+        auto bone = memnew(Bone2D);
+        base_node->add_child(bone);
+        bone->set_owner(owner);
+        bone->set_name(spine_bone->getData().getName().buffer());
+        bone->set_global_position(Vector2(spine_bone->getWorldX(), spine_bone->getWorldY()));
+        bone->set_global_scale(Vector2(spine_bone->getWorldScaleX(), spine_bone->getWorldScaleY()));
+        if (spine_bone->getChildren().size() == 0)
         {
-            auto spine_bone = spine_child_bones[i];
-            auto bone = memnew(Bone2D);
-            base_bone->add_child(bone);
-            bone->set_owner(owner);
-            bone->set_name(spine_bone->getData().getName().buffer());
-            bone->set_global_position(Vector2(spine_bone->getWorldX(), spine_bone->getWorldY()));
-            bone->set_global_scale(Vector2(spine_bone->getWorldScaleX(), spine_bone->getWorldScaleY()));
-            parse_spine_bone(owner, bone, spine_bone->getChildren());
-            if (bone->get_child_count() == 0)
-            {
-                bone->set_autocalculate_length_and_angle(false);
-            }
+            bone->set_autocalculate_length_and_angle(false);
+        }
+        for (size_t i = 0; i < spine_bone->getChildren().size(); i++)
+        {
+            parse_spine_bone(owner, bone, spine_bone->getChildren()[i]);
         }
     }
 };
