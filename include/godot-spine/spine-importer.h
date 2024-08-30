@@ -46,6 +46,7 @@ public:
     Node2D *to_node2d(godot::String node_name)
     {
         auto spine_skeleton = Skeleton(this->skeleton_data.get());
+        spine_skeleton.setScaleY(-1);
         spine_skeleton.updateWorldTransform();
 
         auto spine_node = memnew(Node2D);
@@ -92,7 +93,7 @@ public:
                 {
                     polygon_world_verts.push_back(Vector2(mesh_world_verts[i], mesh_world_verts[i + 1]));
                 }
-                polygon->set_polygon(uv);
+                polygon->set_polygon(polygon_world_verts);
             }
         }
         return spine_node;
