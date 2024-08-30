@@ -40,9 +40,6 @@ public:
         {
             return FAILED;
         }
-        auto root_bone_data = this->skeleton_data->getBones()[0];
-        root_bone_data->setScaleX(1.f);
-        root_bone_data->setScaleY(-1.f);
         this->texture = ResourceLoader::get_singleton()->load(texture_path);
         return OK;
     }
@@ -76,7 +73,7 @@ public:
                 skin->add_child(polygon);
                 polygon->set_owner(spine_node);
                 polygon->set_texture(this->texture);
-                polygon->set_name("Polygon");
+                polygon->set_name(mesh->getName().buffer());
                 polygon->set_skeleton(polygon->get_path_to(skeleton));
 
                 auto uv = PackedVector2Array();
