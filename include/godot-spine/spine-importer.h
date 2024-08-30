@@ -79,13 +79,13 @@ public:
             {
                 auto mesh = (MeshAttachment *)attachment;
 
-                auto polygon_node = memnew(Node2D);
-                skin->add_child(polygon_node);
-                polygon_node->set_owner(spine_node);
-                polygon_node->set_name(slot->getData().getName().buffer());
+                // auto polygon_node = memnew(Node2D);
+                // skin->add_child(polygon_node);
+                // polygon_node->set_owner(spine_node);
+                // polygon_node->set_name(slot->getData().getName().buffer());
 
                 auto polygon = memnew(Polygon2D);
-                polygon_node->add_child(polygon);
+                skin->add_child(polygon);
                 polygon->set_owner(spine_node);
                 polygon->set_texture(this->texture);
                 polygon->set_name("Polygon");
@@ -100,13 +100,20 @@ public:
                 polygon->set_polygon(uv);
                 polygon->set_internal_vertex_count((mesh->getUVs().size() / 2) - (mesh->getHullLength() / 2));
 
-                polygon->set_position((-Vector2({
-                                          mesh->getRegionU() * this->texture->get_width(),
-                                          mesh->getRegionV() * this->texture->get_height(),
-                                      })) -
-                                      (Vector2(mesh->getRegionWidth(), mesh->getRegionHeight()) / 2.f));
-                auto bone = (Bone2D *)skeleton->find_child(slot->getBone().getData().getName().buffer());
-                polygon_node->set_global_position(bone->get_global_position());
+                // polygon->set_position((-Vector2({
+                //                           mesh->getRegionU() * this->texture->get_width(),
+                //                           mesh->getRegionV() * this->texture->get_height(),
+                //                       })) -
+                //                       (Vector2(mesh->getRegionWidth(), mesh->getRegionHeight()) / 2.f));
+
+                // auto skel_uv_sum = Vector2();
+                // for (size_t i = 0; i < mesh->getVertices().size(); i += 3)
+                // {
+                //     skel_uv_sum += Vector2(mesh->getVertices()[i], mesh->getVertices()[i + 1]);
+                // }
+                // auto skel_uv = skel_uv_sum / (mesh->getVertices().size() / 3);
+                // auto bone = (Bone2D *)skeleton->find_child(slot->getBone().getData().getName().buffer());
+                // polygon_node->set_global_position(bone->get_global_position());
             }
         }
         return spine_node;
