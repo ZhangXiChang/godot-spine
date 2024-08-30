@@ -88,7 +88,7 @@ public:
                 skin->add_child(polygon);
                 polygon->set_owner(spine_node);
                 polygon->set_texture(this->texture);
-                polygon->set_name("Polygon");
+                polygon->set_name(slot->getData().getName().buffer());
                 polygon->set_skeleton(polygon->get_path_to(skeleton));
                 auto uv = PackedVector2Array();
                 for (size_t i = 0; i < mesh->getUVs().size(); i += 2)
