@@ -40,7 +40,7 @@ layout_mode = 2
 [node name="AtlasFilePathInput" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Atlas文件路径"
+placeholder_text = "Atlas路径"
 
 [node name="BrowseAtlasFile" type="Button" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -52,16 +52,28 @@ layout_mode = 2
 [node name="SkelFilePathInput" type="LineEdit" parent="VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Skel文件路径"
+placeholder_text = "Skel路径"
 
 [node name="BrowseSkelFile" type="Button" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "浏览"
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureFilePathInput" type="LineEdit" parent="VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "纹理路径"
+
+[node name="BrowseTextureFile" type="Button" parent="VBoxContainer/HBoxContainer4"]
 layout_mode = 2
 text = "浏览"
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="ImputPath" type="LineEdit" parent="VBoxContainer/HBoxContainer3"]
+[node name="ImputPathInput" type="LineEdit" parent="VBoxContainer/HBoxContainer3"]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "导入路径"
@@ -76,5 +88,6 @@ text = "导入"
 
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/BrowseAtlasFile" to="." method="_on_browse_atlas_file_pressed"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer2/BrowseSkelFile" to="." method="_on_browse_skel_file_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer4/BrowseTextureFile" to="." method="_on_browse_texture_file_pressed"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer3/BrowseImputPath" to="." method="_on_browse_imput_path_pressed"]
 [connection signal="pressed" from="VBoxContainer/ImputSpine" to="." method="_on_imput_spine_pressed"]
