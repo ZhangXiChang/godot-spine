@@ -10,5 +10,5 @@ target("godot-spine")
     add_packages("godotcpp4","spine-runtimes")
 
     on_install(function (target)
-        os.cp(target:targetfile(),path.join(os.projectdir(),"addons",target:name(),target:targetfile():split("build")[1]))
+        os.cp(target:targetfile(),path.join(os.projectdir(),"addons",target:name(),target:filename()))
     end)

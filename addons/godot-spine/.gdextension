@@ -3,4 +3,4 @@ entry_symbol="entry"
 compatibility_minimum="4.3"
 
 [libraries]
-windows.debug.x86_64="./windows/x64/debug/godot-spine.dll"
+windows.debug.x86_64="./godot-spine.dll"
