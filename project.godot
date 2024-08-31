@@ -11,7 +11,13 @@ config_version=5
 [application]
 
 config/name="godot-spine"
+run/main_scene="res://null.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
+boot_splash/show_image=false
+
+[display]
+
+window/size/resizable=false
 
 [editor_plugins]
 

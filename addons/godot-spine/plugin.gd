@@ -3,7 +3,7 @@ extends EditorPlugin
 
 func _enter_tree() -> void:
 	#Spine导入器窗口
-    var window = Window.new()
+	var window = Window.new()
 	window.title = "Spine导入器"
 	window.size = Vector2i(300, 210)
 	window.always_on_top = true
