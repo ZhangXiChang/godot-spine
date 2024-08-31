@@ -6,7 +6,7 @@ var window=Window.new()
 func _enter_tree() -> void:
 	#Spine导入器窗口
 	window.title="Spine导入器"
-	window.size=Vector2i(300,200)
+	window.size=Vector2i(300,210)
 	window.always_on_top=true
 	window.close_requested.connect(window.hide)
 	window.add_child(preload("res://addons/godot-spine/res/spine-importer/spine_importer.tscn").instantiate())
@@ -15,23 +15,5 @@ func _enter_tree() -> void:
 	window.hide()
 	add_tool_menu_item("Spine导入器",window.show)
 
-	test()
-
 func _exit_tree() -> void:
 	remove_tool_menu_item("Spine导入器")
-
-func test()->void:
-	var spine_importer=SpineImporter.new()
-	if spine_importer.load(
-		"C:/Users/yxrbe/Project/Godot/demo/test/char_179_cgbird_sightseer_1.atlas",
-		"C:/Users/yxrbe/Project/Godot/demo/test/char_179_cgbird_sightseer_1.skel",
-		"C:/Users/yxrbe/Project/Godot/demo/test/char_179_cgbird_sightseer_1.png"
-	)!=OK:
-		push_error("加载文件失败")
-	else:
-		var spine_scene=PackedScene.new()
-		if spine_scene.pack(spine_importer.to_node2d("Spine"))!=OK:
-			push_error("保存为场景失败")
-		else:
-			ResourceSaver.save(spine_scene,"C:/Users/yxrbe/Project/Godot/demo/test/test.tscn")
-	spine_importer.free()

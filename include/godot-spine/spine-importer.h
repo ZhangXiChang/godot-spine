@@ -56,6 +56,7 @@ public:
         spine_node->add_child(skeleton);
         skeleton->set_owner(spine_node);
         skeleton->set_name("Skeleton");
+        skeleton->set_visible(false);
         parse_spine_bone(spine_node, skeleton, spine_skeleton.getRootBone());
 
         auto skin = memnew(Node2D);
@@ -74,24 +75,23 @@ public:
                 skin->add_child(polygon);
                 polygon->set_owner(spine_node);
                 polygon->set_name(mesh->getName().buffer());
-                polygon->set_texture(this->texture);
                 polygon->set_skeleton(polygon->get_path_to(skeleton));
 
-                auto uv = PackedVector2Array();
-                for (size_t i = 0; i < mesh->getUVs().size(); i += 2)
+                polygon->set_texture(this->texture);
+                auto polygon_uv = PackedVector2Array();
+                for (size_t i = 0; i < mesh->getHullLength(); i += 2)
                 {
-                    uv.push_back(Vector2(mesh->getUVs()[i] * this->texture->get_width(), mesh->getUVs()[i + 1] * this->texture->get_height()));
+                    polygon_uv.append(Vector2(mesh->getUVs()[i] * this->texture->get_width(), mesh->getUVs()[i + 1] * this->texture->get_height()));
                 }
-                polygon->set_uv(uv);
-                polygon->set_internal_vertex_count((mesh->getUVs().size() / 2) - (mesh->getHullLength() / 2));
+                polygon->set_uv(polygon_uv);
 
                 auto polygon_world_verts = PackedVector2Array();
                 spine::Vector<float> mesh_world_verts;
                 mesh_world_verts.setSize(mesh->getWorldVerticesLength(), 0);
                 mesh->computeWorldVertices(*slot, mesh_world_verts);
-                for (size_t i = 0; i < mesh_world_verts.size(); i += 2)
+                for (size_t i = 0; i < mesh->getHullLength(); i += 2)
                 {
-                    polygon_world_verts.push_back(Vector2(mesh_world_verts[i], mesh_world_verts[i + 1]));
+                    polygon_world_verts.append(Vector2(mesh_world_verts[i], mesh_world_verts[i + 1]));
                 }
                 polygon->set_polygon(polygon_world_verts);
             }
