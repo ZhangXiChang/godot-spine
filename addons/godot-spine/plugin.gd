@@ -9,7 +9,7 @@ func _enter_tree() -> void:
 	window.size = Vector2i(300, 210)
 	window.always_on_top = true
 	window.close_requested.connect(window.hide)
-	window.add_child(preload("res://addons/godot-spine/res/spine-importer/spine_importer.tscn").instantiate())
+	window.add_child(preload("res://addons/godot-spine/spine-importer/spine_importer.tscn").instantiate())
 	get_tree().root.add_child(window)
 	window.move_to_center()
 	window.hide()
