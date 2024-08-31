@@ -51,4 +51,3 @@ func _on_imput_spine_pressed() -> void:
 			push_error("保存为场景失败")
 		else:
 			ResourceSaver.save(spine_scene, $VBoxContainer/HBoxContainer3/ImputPathInput.text)
-	spine_importer.free()
